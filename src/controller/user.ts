@@ -2,8 +2,8 @@ import { Request, Response, request } from 'express'
 import  Jwt  from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import { user } from '../model/user'
-import { passwordUser } from '../model/passwordModel'
-import { acessToken } from '../midlewere/auth.guard'
+import { PasswordUser } from '../model/passwordModel'
+//mport { acessToken } from '../midlewere/auth.guard'
 
 
 export const createUser = async (request:Request, response:Response) =>{
@@ -43,7 +43,7 @@ export const createUser = async (request:Request, response:Response) =>{
 
         })
 
-        const passwordF = await passwordUser.create({
+        const passwordF = await PasswordUser.create({
             userID:_id,
             password:encryptedpasswordhash
         })
@@ -64,7 +64,7 @@ export const loginUser = async(request:Request, response:Response) =>{
       }
     
       if (!password) {
-        return response.status(422).json({ msg: "a password is requiredrs" });
+        return response.status(422).json({ msg: "a password is required" });
       }
       
       const utilizador = await user.findOne({ email });
@@ -74,8 +74,9 @@ export const loginUser = async(request:Request, response:Response) =>{
         return response.status(404).json({ msg: "User not found" });
       }
       console.log(utilizador)
+      const pass = await PasswordUser.findOne({userID: utilizador._id})
     
-      const checkpassword = await bcrypt.compare(password, passwordUser.password);
+      const checkpassword = await bcrypt.compare(password, pass?.password);
       if (!checkpassword) {
         return response.status(404).json({ msg: "Invalid password" });
       }
