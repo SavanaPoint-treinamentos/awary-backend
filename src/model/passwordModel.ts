@@ -17,4 +17,4 @@ const passwordSchema = new Schema({
 
 }, {timestamps:true});
 
-export const passwordUser = model('password', passwordSchema)
+export const PasswordUser = model('password', passwordSchema)
