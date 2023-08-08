@@ -1,33 +1,56 @@
 import { NextFunction, Request, Response, request } from "express";
 import { loginUser } from "../controller/user";
-import { Jwt } from "jsonwebtoken";
+import { user } from "../model/user";
+import { Refreshtoken } from "../model/refreshModel";
+import  Jwt  from "jsonwebtoken";
 import dotenv from 'dotenv'
 dotenv.config()
 
-const tokenhash = process.env.TOKEN_KEY
-export const verifyToken = (request: Request, response: Response, next:NextFunction) => {
-  const token = request.body.token || request.query.token || request.headers["x-access-token"];
+const secret = process.env.TOKEN_KEY!
+export const verifyToken = (request: any, response: Response, next:NextFunction) => {
+  const token = request.body.token || request.query.token || request.headers.token;
+
+  console.log(secret)
 
   if (!token) {
     return response.status(403).send("A token is required for authentication");
   }
   try {
-    const decoded = Jwt.verify(token, tokenhash);
+    const decoded = Jwt.verify(token, secret);
     request.loginUser = decoded;
+    return next();
   } catch (err) {
+    console.log(err)
     return response.status(401).send("Invalid Token");
   }
-  return next();
-};
+}
 
 
-// export const acessToken = async (request:Request, response:Response) =>{
-//               const payload = {
-//                 name : 'yours truly'
 
-//               }
 
-//               const secret = 'some super secret'
-//               const options = {}
-//               Jwt.sign(payload, secret, options,tokenhash)
-// }
+const AUTH_GUARD = process.env.SECRET_REFRESH !
+export const verifyRefreshToken = async (request: any, response: Response, next:NextFunction) => {
+  const {userID} = request.body
+  const token = request.body.token 
+
+  console.log(AUTH_GUARD)
+
+  if (!token) {
+    return response.status(403).send("A token is required for authentication");
+  }
+  try {
+    const decoded = Jwt.verify(token, AUTH_GUARD);
+    const userToken = await Refreshtoken.findOne({
+      where:{
+        userID,
+        Refreshtoken
+      }
+    })
+
+    request.loginUser = decoded;
+    return next();
+  } catch (err) {
+    console.log(err)
+    return response.status(401).send("Invalid Token");
+  }
+}
