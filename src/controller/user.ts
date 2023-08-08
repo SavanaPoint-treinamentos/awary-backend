@@ -1,13 +1,16 @@
 import { Request, Response, request } from 'express'
 import  Jwt  from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
+import dayjs from 'dayjs'
+import { Refreshtoken } from '../model/refreshModel'
 import { user } from '../model/user'
 import { PasswordUser } from '../model/passwordModel'
 //mport { acessToken } from '../midlewere/auth.guard'
+//import { genareteToken } from '../provider/refresh'
 
 
 export const createUser = async (request:Request, response:Response) =>{
-    const {firstName, lastName, email, password,photoprofile,city,} = request.body
+    const {firstName, lastName, email, password,photoprofile,city} = request.body
     if (!firstName){
         return response.status(422).json({ msg: " name is required" });
     }
@@ -57,7 +60,7 @@ export const createUser = async (request:Request, response:Response) =>{
 }
 
 export const loginUser = async(request:Request, response:Response) =>{
-    const {email, password} = request.body
+    const {email, password,tokenRef} = request.body
     
     if (!email) {
         return response.status(422).json({ msg: "email is required" });
@@ -81,25 +84,46 @@ export const loginUser = async(request:Request, response:Response) =>{
         return response.status(404).json({ msg: "Invalid password" });
       }
     
-
     try {
        //const loginUserF = await loginFirebase(emailUser, passwordUser)
-
        const secret = process.env.TOKEN_KEY!
        const token = Jwt.sign({
         _id:utilizador._id,
+    }, `${secret}`, {expiresIn: '3min'})  
 
+    //TESTE>>.......
 
+    const newutilizador = await user.findOne({ email });
+    console.log(newutilizador)
+    const expiresDate = dayjs().add(15, "day").unix()
+   
+    if (!newutilizador) {
+      return response.status(404).json({ msg: "User not found" });
+    }
 
-    }, `${secret}`, {expiresIn: 1000})  
-   return response.status(200).json(`autenticacao realizada com sucesso, ${token}`);
-       
-        //return response.status(200).json(loginUserF)
+    const reftoken = Jwt.sign({
+        _id:newutilizador._id,
+    }, `${secret}`, {expiresIn: expiresDate}) 
+     
+    await Refreshtoken.create({
+        userID: newutilizador?._id,
+        tokenRef:reftoken,
+        expiresIN: expiresDate,
+      });
+
+      console.log(reftoken)
+   return response.status(200).json(`autenticacao realizada com sucesso, ${token}, RefreshToken: ${reftoken}`);
+
+   //const refresh = await genareteToken.execute(utilizador?._id)
     } catch (error) {
         return response.status(401).json(error)
         
     }
+
+   
 }
+
+
 
 
 
@@ -109,5 +133,42 @@ export const getUser = async (request:Request, response:Response) =>{
         return response.status(200).json(getUserF)
     } catch (error) {
         return response.status(200).json('nenhum usuário encontrado')
+    }
+}
+
+export const getUserID = async (request:Request, response:Response) =>{
+    const {_id} = request.params
+    try {
+        const getUserF = await user.findById({_id})
+        if (!getUserF){
+            return response.status(401).json('nenhum usuário encontrado')
+        }
+        return response.status(200).json(getUserF)
+    } catch (error) {
+        return response.status(200).json('nenhum usuário encontrado')
+    }
+}
+
+export const updateUser = async (request:Request, response:Response) =>{
+    const {_id} = request.params
+    const {firstName, lastName, email, password,photoprofile,city} = request.body
+    try {
+        const updateUserF = await user.findById({_id})
+        if (!updateUserF){
+            return response.status(401).json('nenhum usuário encontrado')
+        }
+        await user.updateOne({_id},{
+            displayName:{
+                firstName,
+                lastName,
+            },
+            email,
+            photoprofile
+        })
+        return response.status(200).json(updateUserF)
+
+    } catch (error) {
+        return response.status(401).json('erro ao actualizar usuário, tente novamente!')
+        
     }
 }
