@@ -12,7 +12,6 @@ import { PasswordUser } from '../model/passwordModel'
 
 export const refreshConroller = async(request:any, response:Response, next:NextFunction, refresh_token:string) =>{
           const {RefreshToken} = request.body
-          const token = await 
          
   
 
