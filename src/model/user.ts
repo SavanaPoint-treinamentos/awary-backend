@@ -8,7 +8,7 @@ const SchemaUser = new Schema(
         required: false,
       },
 
-    displayNae: {
+    displayName: {
       firstName: {
         type: String,
         required: false,
@@ -28,6 +28,11 @@ const SchemaUser = new Schema(
       lowercase: true,
       unique: true,
       min: 6,
+    },
+
+    bornDay: {
+      type: Date,
+      required: false,
     },
 
     city: {
