@@ -21,9 +21,12 @@
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.0.1",
     "path": "^0.12.7",
-    "sucrase": "^3.34.0"
+    "sucrase": "^3.34.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.2"
+    "@types/bcrypt": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.2",
+    "@types/uuid": "^9.0.2"
   }
 }

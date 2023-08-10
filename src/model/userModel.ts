@@ -31,13 +31,13 @@ const SchemaUser = new Schema(
     },
 
     bornDay: {
-      type: Date,
-      required: false,
+      type: String,
+      required: true,
     },
 
     city: {
       type: String,
-      required: false,
+      required: true,
     },
 
     photoprofile: {
