@@ -1,23 +1,42 @@
-import { NextFunction, Request, Response, request } from 'express'
-import  Jwt  from 'jsonwebtoken'
-import bcrypt from 'bcrypt'
+import { NextFunction, Request, Response, request } from "express";
+import Jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 import dayjs from "dayjs";
-import { user } from '../model/user'
-import { loginUser } from "../controller/user"
-import { Refreshtoken } from '../model/refreshModel';
-import { PasswordUser } from '../model/passwordModel'
-//mport { acessToken } from '../midlewere/auth.guard'
-//import { genareteToken } from '../provider/refresh'
+import { user } from "../model/userModel";
+import { loginUser } from "./userControll";
+import { PasswordUser } from "../model/passwordModel";
+import { Refreshtoken } from "../model/refreshModel";
 
 
-export const refreshConroller = async(request:any, response:Response, next:NextFunction, refresh_token:string) =>{
-          const {RefreshToken} = request.body
-         
+const secret = process.env.TOKEN_KEY!;
+
+export const refreshConroller = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
   
+) => {
+  const { tokenID } = request.body;
 
+  try {
+    const dataToken = await Refreshtoken.findOne({ tokenID });
+    if (!dataToken) {
+      return response.status(404).json({ message: "refreshtoken not found" });
+    }
 
-}
+    const { tokenRef } = dataToken;
+    const refToken: any = Jwt.verify(tokenRef, `${secret}`);
 
+    const token = Jwt.sign(
+      {
+        _id: refToken._id,
+      },
+      `${secret}`,
+      { expiresIn: "3min" }
+    );
 
-
-   
+    return response.status(200).json(token)
+  } catch (error) {
+    return response.status(400).json(error)
+  }
+};

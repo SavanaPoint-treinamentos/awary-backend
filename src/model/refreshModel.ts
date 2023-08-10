@@ -9,16 +9,17 @@ const tokenSchema = new Schema({
     required: true
   },
 
-  expiresIN:{
-    type:Date,
-    required:true,
-},
-
+ 
 tokenRef:{
   type:String,
   required:true,
-}
+},
 
+tokenID: {
+  type: String,
+  required: true,
+  unique: true
+}
 
 }, {timestamps:true});
 

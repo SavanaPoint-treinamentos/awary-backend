@@ -1,14 +1,13 @@
 import { Request, Response, request } from 'express'
 import  Jwt  from 'jsonwebtoken'
+import { v4 as uuid } from 'uuid'
 import bcrypt from 'bcrypt'
 import dayjs from 'dayjs'
 import { Refreshtoken } from '../model/refreshModel'
-import { user } from '../model/user'
+import { user } from '../model/userModel'
 import { PasswordUser } from '../model/passwordModel'
-import { AUTH_USER } from '../usecase/authUser'
-//mport { acessToken } from '../midlewere/auth.guard'
-//import { genareteToken } from '../provider/refresh'
 
+const secret = process.env.TOKEN_KEY!
 
 export const createUser = async (request:Request, response:Response) =>{
     const {firstName, lastName, email, password,bornDay,photoprofile,city} = request.body
@@ -44,7 +43,7 @@ export const createUser = async (request:Request, response:Response) =>{
             },
             email,
             bornDay,
-            photoprofile
+            city
 
         })
 
@@ -64,23 +63,70 @@ export const createUser = async (request:Request, response:Response) =>{
 }
 
 
-
 export const loginUser = async(request:Request, response:Response) =>{
     const {email, password,tokenRef} = request.body
     
-        const loginUserF = await AUTH_USER.execute({
-                email,
-                password
-        })
+    if (!email) {
+        return response.status(422).json({ msg: "email is required" });
+      }
+    
+      if (!password) {
+        return response.status(422).json({ msg: "a password is required" });
+      }
+      
+      const utilizador = await user.findOne({ email });
+      console.log(utilizador)
+     
+      if (!utilizador) {
+        return response.status(404).json({ msg: "User not found" });
+      }
+      console.log(utilizador)
+      const pass: any = await PasswordUser.findOne({userID: utilizador._id})
+    
+      const checkpassword = await bcrypt.compare(password, pass?.password);
+      if (!checkpassword) {
+        return response.status(404).json({ msg: "Invalid password" });
+      }
+    
+    try {
+       //const loginUserF = await loginFirebase(emailUser, passwordUser)
+       
+       const token = Jwt.sign({_id:utilizador._id}, 'savanapoint', {expiresIn: '3000'})  
 
-        return response.status(400).json(loginUserF)
+      //>> refreshToken<<<.......
+
+    const newutilizador = await user.findOne({ email });
+    console.log(newutilizador)
+    
+   
+    if (!newutilizador) {
+      return response.status(404).json({ msg: "User not found" });
+    }
+    console.log(secret)
+    const reftoken = Jwt.sign({
+        _id:newutilizador._id,
+    }, `${secret}`, {expiresIn: '6min'}) 
+     
+    const { tokenID, tokenRef } = await Refreshtoken.create({
+        userID: newutilizador?._id,
+        tokenRef:reftoken,
+        tokenID: uuid()
+      });
+
+      console.log(reftoken)
+   return response.status(200).json({
+    token,
+    tokenID,
+   });
+
+   //const refresh = await genareteToken.execute(utilizador?._id)
+    } catch (error) {
+        return response.status(401).json(error)
+        
+    }
 
    
 }
-
-
-
-
 
 export const getUser = async (request:Request, response:Response) =>{
     try {
@@ -106,7 +152,7 @@ export const getUserID = async (request:Request, response:Response) =>{
 
 export const updateUser = async (request:Request, response:Response) =>{
     const {_id} = request.params
-    const {firstName, lastName, email, password,photoprofile,city} = request.body
+    const {firstName, lastName, email, password,bornDay,photoprofile,city} = request.body
     try {
         const updateUserF = await user.findById({_id})
         if (!updateUserF){
@@ -118,6 +164,8 @@ export const updateUser = async (request:Request, response:Response) =>{
                 lastName,
             },
             email,
+            bornDay,
+            city,
             photoprofile
         })
         return response.status(200).json(updateUserF)
