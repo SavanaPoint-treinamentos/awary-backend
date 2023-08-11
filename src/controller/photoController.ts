@@ -12,7 +12,7 @@ export const createPhoto = async (request:any, response:Response) =>{
     try {
       
         const picture = await Photo.create({
-            userID: usuario._id,
+            userID: usuario[0]._id,
             name,
             src:file.path
         })

@@ -2,13 +2,13 @@ import { Request, Response, request } from 'express'
 import fs from 'fs'
 import { Post } from '../model/postModel'
 import { User } from '../model/userModel'
-//import { fileOptions } from '../middlewere/upload'
+
 
 export const createPost = async (request:any, response:Response) =>{
     const {postTitle, postPhoto} = request.body
     try {
         const usuario : any = await User.find({uid:request.userId})
-        //const uploadPost = await fileOptions
+        
         const createPostF = await Post.create({
             postTitle,
             postPhoto,

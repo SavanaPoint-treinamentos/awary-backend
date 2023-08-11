@@ -32,7 +32,7 @@ export const refreshConroller = async (
         _id: refToken._id,
       },
       `${secret}`,
-      { expiresIn: "60min" }
+      { expiresIn: "9d" }
     );
 
     return response.status(200).json(token)
