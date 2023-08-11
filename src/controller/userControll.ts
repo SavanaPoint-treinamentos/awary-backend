@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid'
 import bcrypt from 'bcrypt'
 import dayjs from 'dayjs'
 import { Refreshtoken } from '../model/refreshModel'
-import { user } from '../model/userModel'
+import { User } from '../model/userModel'
 import { PasswordUser } from '../model/passwordModel'
 
 const secret = process.env.TOKEN_KEY!
@@ -27,7 +27,7 @@ export const createUser = async (request:Request, response:Response) =>{
         return response.status(422).json({ msg: " password is required" });
       }
 
-      const doesExiste = await user.findOne({email})
+      const doesExiste = await User.findOne({email})
       if(doesExiste){
         return response.status(401).json('user already exist, please login!')
       }
@@ -36,7 +36,7 @@ export const createUser = async (request:Request, response:Response) =>{
 
     try {
 
-        const {_id} = await user.create({
+        const {_id} = await User.create({
             displayName:{
                 firstName,
                 lastName,
@@ -74,7 +74,7 @@ export const loginUser = async(request:Request, response:Response) =>{
         return response.status(422).json({ msg: "a password is required" });
       }
       
-      const utilizador = await user.findOne({ email });
+      const utilizador = await User.findOne({ email });
       console.log(utilizador)
      
       if (!utilizador) {
@@ -95,7 +95,7 @@ export const loginUser = async(request:Request, response:Response) =>{
 
       //>> refreshToken<<<.......
 
-    const newutilizador = await user.findOne({ email });
+    const newutilizador = await User.findOne({ email });
     console.log(newutilizador)
     
    
@@ -105,7 +105,7 @@ export const loginUser = async(request:Request, response:Response) =>{
     console.log(secret)
     const reftoken = Jwt.sign({
         _id:newutilizador._id,
-    }, `${secret}`, {expiresIn: '6min'}) 
+    }, `${secret}`, {expiresIn: '1y'}) 
      
     const { tokenID, tokenRef } = await Refreshtoken.create({
         userID: newutilizador?._id,
@@ -128,25 +128,40 @@ export const loginUser = async(request:Request, response:Response) =>{
    
 }
 
+export const logOutuser = async (request:Request, response:Response) =>{
+    const {_id} = request.params
+    try {
+        const deleteUserF = await User.findById({_id})
+        if(!deleteUserF){
+            return response.status(401).json('user not found')
+        }
+
+        await User.deleteOne({_id})
+        return response.status(200).json('user deleted')
+    } catch (error) {
+        return response.status(401).json(error)
+    }
+}
+
 export const getUser = async (request:Request, response:Response) =>{
     try {
-        const getUserF = await user.find()
+        const getUserF = await User.find()
         return response.status(200).json(getUserF)
     } catch (error) {
-        return response.status(200).json('nenhum usuário encontrado')
+        return response.status(404).json('user not found')
     }
 }
 
 export const getUserID = async (request:Request, response:Response) =>{
     const {_id} = request.params
     try {
-        const getUserF = await user.findById({_id})
+        const getUserF = await User.findById({_id})
         if (!getUserF){
-            return response.status(401).json('nenhum usuário encontrado')
+            return response.status(401).json('user not found')
         }
         return response.status(200).json(getUserF)
     } catch (error) {
-        return response.status(200).json('nenhum usuário encontrado')
+        return response.status(200).json(error)
     }
 }
 
@@ -154,11 +169,11 @@ export const updateUser = async (request:Request, response:Response) =>{
     const {_id} = request.params
     const {firstName, lastName, email, password,bornDay,photoprofile,city} = request.body
     try {
-        const updateUserF = await user.findById({_id})
+        const updateUserF = await User.findById({_id})
         if (!updateUserF){
-            return response.status(401).json('nenhum usuário encontrado')
+            return response.status(404).json('user not found')
         }
-        await user.updateOne({_id},{
+        await User.updateOne({_id},{
             displayName:{
                 firstName,
                 lastName,
@@ -171,7 +186,23 @@ export const updateUser = async (request:Request, response:Response) =>{
         return response.status(200).json(updateUserF)
 
     } catch (error) {
-        return response.status(401).json('erro ao actualizar usuário, tente novamente!')
+        return response.status(401).json('error, please try again')
         
     }
 }
+
+export const deleteUser = async (request:Request, response:Response) =>{
+    const {_id} = request.params
+    try {
+        const deleteUserF = await User.findById({_id})
+        if(!deleteUserF){
+            return response.status(401).json('user not found')
+        }
+
+        await User.deleteOne({_id})
+        return response.status(200).json('user deleted')
+    } catch (error) {
+        return response.status(401).json(error)
+    }
+}
+
