@@ -4,13 +4,11 @@ import { User } from "./userModel";
 
 
 
-
-
 const photoSchema = new Schema({
    userID:{
     type:Schema.Types.ObjectId,
     ref: 'User',
-    required: false
+    required: true
   },
 
 src: {

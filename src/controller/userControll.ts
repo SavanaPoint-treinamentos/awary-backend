@@ -128,20 +128,6 @@ export const loginUser = async(request:Request, response:Response) =>{
    
 }
 
-export const logOutuser = async (request:Request, response:Response) =>{
-    const {_id} = request.params
-    try {
-        const deleteUserF = await User.findById({_id})
-        if(!deleteUserF){
-            return response.status(401).json('user not found')
-        }
-
-        await User.deleteOne({_id})
-        return response.status(200).json('user deleted')
-    } catch (error) {
-        return response.status(401).json(error)
-    }
-}
 
 export const getUser = async (request:Request, response:Response) =>{
     try {

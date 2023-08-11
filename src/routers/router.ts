@@ -5,9 +5,10 @@ import {Request, Response} from 'express'
 import { verifyToken } from "../midlewere/auth.guard";
 import { createUser, deleteUser, getUser, getUserID, loginUser, updateUser} from "../controller/userControll";
 import { refreshConroller } from "../controller/refreshController";
-import { createPost, getPost } from "../controller/postController";
+import { createPost, deletePost, getPost } from "../controller/postController";
 import { upload } from "../config/multer";
 import { createPhoto } from "../controller/photoController";
+import { createComent, getComent } from "../controller/commentControl";
 
 
 export const router = Router()
@@ -26,8 +27,11 @@ router.delete ('/awary/deleteUser/:_id',verifyToken, deleteUser)
 router.post ('/awary/createPost',verifyToken, createPost )
 router.get ('/awary/getPost', verifyToken, getPost)
 router.get ('/awary/getPostID/:_id', verifyToken, getPost)
+router.delete ('/awary/deletePost/:_id', verifyToken, deletePost)
 
 
+router.post ('/awary/createComent',verifyToken, createComent )
+router.post ('/awary/getComent',verifyToken, getComent )
 
 
 
