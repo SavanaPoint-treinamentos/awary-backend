@@ -2,7 +2,7 @@ import { NextFunction, Request, Response, request } from "express";
 import Jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import dayjs from "dayjs";
-import { user } from "../model/userModel";
+import { User } from "../model/userModel";
 import { loginUser } from "./userControll";
 import { PasswordUser } from "../model/passwordModel";
 import { Refreshtoken } from "../model/refreshModel";
@@ -32,7 +32,7 @@ export const refreshConroller = async (
         _id: refToken._id,
       },
       `${secret}`,
-      { expiresIn: "3min" }
+      { expiresIn: "60min" }
     );
 
     return response.status(200).json(token)

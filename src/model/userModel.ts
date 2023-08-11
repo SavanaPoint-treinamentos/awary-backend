@@ -2,12 +2,6 @@ import { Schema, model } from "mongoose";
 
 const SchemaUser = new Schema(
   {
-    id: {
-        type: String,
-        unique: true,
-        required: false,
-      },
-
     displayName: {
       firstName: {
         type: String,
@@ -48,4 +42,4 @@ const SchemaUser = new Schema(
   { timestamps: true }
 );
 
-export const user = model("user", SchemaUser);
+export const User = model("User", SchemaUser);
