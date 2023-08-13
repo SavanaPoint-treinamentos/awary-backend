@@ -11,6 +11,8 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(express.static(path.join(__dirname, 'medleware')))
+//app.use(express.static(path.join(__dirname, 'config/public')))
+app.use('/public',express.static(path.join(__dirname, 'config/public')))
 app.use('/api', router)
 
 connectionDB()
