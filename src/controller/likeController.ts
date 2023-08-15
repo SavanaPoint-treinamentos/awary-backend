@@ -8,7 +8,6 @@ export const createLike= async (request:any, response:Response) =>{
     const { _id } = request.loginUser
     const {postID} = request.body
     try {
-        //const usuarioID : any = await User.findById({_id})
         const like : any = await Like.findOne({userID:_id, postID:postID})
         console.log(like)
         if(like){

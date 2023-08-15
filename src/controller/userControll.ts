@@ -54,7 +54,6 @@ export const createUser = async (request:Request, response:Response) =>{
 
         return response.status(200).json('user created ')
     } catch (error) {
-        console.log(error)
         return response.status(401).json(error)    
     }
    
@@ -75,12 +74,10 @@ export const loginUser = async(request:Request, response:Response) =>{
       }
       
       const utilizador = await User.findOne({ email });
-      console.log(utilizador)
      
       if (!utilizador) {
         return response.status(404).json({ msg: "User not found" });
       }
-      console.log(utilizador)
       const pass: any = await PasswordUser.findOne({userID: utilizador._id})
     
       const checkpassword = await bcrypt.compare(password, pass?.password);
@@ -113,7 +110,6 @@ export const loginUser = async(request:Request, response:Response) =>{
         tokenID: uuid()
       });
 
-      console.log(reftoken)
    return response.status(200).json({
     token,
     tokenID,

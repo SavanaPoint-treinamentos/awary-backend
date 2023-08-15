@@ -20,7 +20,6 @@ export const createPhoto = async (request:any, response:Response) =>{
         return response.status(200).json({picture, massege: 'saved'})
 
     } catch (error) {
-        console.log(error)
         return response.status(500).json(error)
     }
 }

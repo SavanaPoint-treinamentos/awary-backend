@@ -18,7 +18,6 @@ export const createPost = async (request:any, response:Response) =>{
         return response.status(200).json(createPostF)
 
     } catch (error) {
-        console.log(error)
         return response.status(401).json('error, try again')
         
     }
