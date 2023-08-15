@@ -36,7 +36,6 @@ const SchemaUser = new Schema(
 
     photoprofile: {
       type: String,
-      default: null,
     },
   },
   { timestamps: true }

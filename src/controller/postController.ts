@@ -1,18 +1,19 @@
 import { Request, Response, request } from 'express'
-import fs from 'fs'
 import { Post } from '../model/postModel'
 import { User } from '../model/userModel'
 
 
 export const createPost = async (request:any, response:Response) =>{
+    const { _id } = request.loginUser
+   
     const {postTitle, postPhoto} = request.body
     try {
-        const usuario : any = await User.find({uid:request.userId})
+        const usuario : any = await User.findById({_id})
         
         const createPostF = await Post.create({
             postTitle,
             postPhoto,
-            userID:usuario[0]._id
+            userID:usuario._id
         })
         return response.status(200).json(createPostF)
 

@@ -1,5 +1,5 @@
 import { Request, Response, request } from 'express'
-import { Coment } from '../model/comentSchema'
+import { Coment } from '../model/comentModel'
 import { User } from '../model/userModel'
 
 export const createComent= async (request:any, response:Response) =>{
@@ -12,7 +12,7 @@ export const createComent= async (request:any, response:Response) =>{
             userID:usuario?._id
         })
        
-        return response.status(200).json('Comment crieted')
+        return response.status(200).json(createComentF)
 
     } catch (error) {
         console.log(error)
@@ -43,7 +43,7 @@ export const getComentID = async (request:Request, response:Response) =>{
     export const getComentpostID = async (request:Request, response:Response) =>{
         const {postID} = request.params
         try {
-            const getComentF = await Coment.find({postID}).populate('userID').populate('postID')
+            const getComentF = await Coment.find().populate('userID').populate('postID')
             return response.status(200).json(getComentF)
         } catch (error) {
             return response.status(200).json('no posts found')
@@ -77,11 +77,11 @@ export const deleteComent = async (request:Request, response:Response) =>{
     try {
         const deletePostF = await Coment.findById({_id})
         if(!deletePostF){
-            return response.status(401).json('post not found')
+            return response.status(401).json('comment not found')
         }
 
         await Coment.deleteOne({_id})
-        return response.status(200).json('post deleted')
+        return response.status(200).json('comment deleted')
     } catch (error) {
         return response.status(401).json(error)
     }

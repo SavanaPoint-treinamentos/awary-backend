@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, request } from "express";
 import { loginUser } from "../controller/userControll";
-import { user } from "../model/userModel";
+
 import { Refreshtoken } from "../model/refreshModel";
 import  Jwt  from "jsonwebtoken";
 import dotenv from 'dotenv'

@@ -8,7 +8,8 @@ import { refreshConroller } from "../controller/refreshController";
 import { createPost, deletePost, getPost } from "../controller/postController";
 import { upload } from "../config/multer";
 import { createPhoto } from "../controller/photoController";
-import { createComent, getComent } from "../controller/commentControl";
+import { createComent, deleteComent, getComent, updateComent } from "../controller/commentControl";
+import { createLike, getLike, getLikeID } from "../controller/likeController";
 
 
 export const router = Router()
@@ -31,7 +32,14 @@ router.delete ('/awary/deletePost/:_id', verifyToken, deletePost)
 
 
 router.post ('/awary/createComent',verifyToken, createComent )
-router.post ('/awary/getComent',verifyToken, getComent )
+router.get ('/awary/getComent',verifyToken, getComent )
+router.delete ('/awary/deleteComent/:_id', verifyToken, deleteComent)
+router.put ('/awary/updateComent/:_id', verifyToken,  updateComent)
+
+
+router.post ('/awary/createLike',verifyToken, createLike )
+router.get ('/awary/getLike',verifyToken, getLike )
+router.get ('/awary/getLikeID/:_id',verifyToken, getLikeID )
 
 
 
