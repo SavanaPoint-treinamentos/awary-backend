@@ -52,7 +52,7 @@ export const createUser = async (request:Request, response:Response) =>{
             password:encryptedpasswordhash
         })
 
-        return response.status(200).json('user created ')
+        return response.status(201).json('user created ')
     } catch (error) {
         return response.status(401).json(error)    
     }

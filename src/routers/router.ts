@@ -14,7 +14,6 @@ import { createLike, getLike, getLikeID } from "../controller/likeController";
 
 export const router = Router()
 const uppload = express()
-
 router.post ('/awary/uploadPhoto', upload.single('file'),createPhoto )
 
 router.post ('/awary/createUser', createUser )

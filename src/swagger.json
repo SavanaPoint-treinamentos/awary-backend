@@ -1,0 +1,92 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "social network api",
+    "description": "aims to manipulate user posts",
+    "termofservices": "http://localhost:3000/terms",
+    "contact": {
+      "email": "awary. savanapoint@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "test API"
+    },
+    {
+      "url": "http://www.awary.com",
+      "description": "production API"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "post": {
+        "summary": "User registration",
+        "description": "this route will be responsible for creating a new user",
+        "tags": [
+          "users"
+        ],
+        "requestBody": {
+          "content": {
+            "aplication/json": {
+              "schema": {
+                "$ref":"#/components/schemas/user"
+              },
+              "examples":{
+                "user":{
+                  "firstName":"Antonio",
+                  "lastName":"Marques",
+                  "email":"marques",
+                  "password":"********",
+                  "bornDay":"12/5/2005",
+                  "photoprofile":"http://localhost:3000/public/1692010675729.png",
+                  "city":"Maputo"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components":{
+    "schemas":{
+      "user":{
+        "type": "object",
+        "properties":{
+            "firstName":{
+              "type":"string",
+              "required":"true"
+            },
+             "lastName":{
+              "type":"string",
+              "required":"true"
+            },
+          
+          "email":{
+            "type":"string",
+            "required":"true"
+          },
+          "password":{
+            "type":"string",
+            "required":"true"
+          },
+          "bornDay":{
+            "type":"string",
+            "required":"true"
+          },
+          "photoProfile":{
+            "type":"string",
+            "required":"true"
+          },
+          "city":{
+            "type":"string",
+            "required":"true"
+          }
+        }
+      }
+    }
+  }
+  
+}
